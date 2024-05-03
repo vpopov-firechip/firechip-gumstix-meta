@@ -1,0 +1,1 @@
+# firechip-gumstix-meta

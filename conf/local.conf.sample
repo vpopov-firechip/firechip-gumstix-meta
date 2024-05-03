@@ -1,0 +1,450 @@
+LICENSE_FLAGS_WHITELIST = "commercial"
+
+#
+# This file is your local configuration file and is where all local user settings
+# are placed. The comments in this file give some guide to the options a new user
+# to the system might want to change but pretty much any configuration option can
+# be set in this file. More adventurous users can look at local.conf.extended 
+# which contains other examples of configuration which can be placed in this file
+# but new users likely won't need any of them initially.
+#
+# Lines starting with the '#' character are commented out and in some cases the 
+# default values are provided as comments to show people example syntax. Enabling
+# the option is a question of removing the # character and making any change to the
+# variable as required.
+
+# Set a few Preferred Providers that aren't specified elsewhere
+PREFERRED_PROVIDER_sshd = "openssh"
+PREFERRED_PROVIDER_jpeg = "libjpeg-turbo"
+PREFERRED_PROVIDER_jpeg-native = "libjpeg-turbo-native"
+PREFERRED_PROVIDER_virtual/java-initial-native = "cacao-initial-native"
+PREFERRED_PROVIDER_virtual/java-native = "cacao-native"
+DEFAULTJRE ?= "openjdk-8-jre"
+PREFERRED_PROVIDER_java2-vm = "${DEFAULTJRE}"
+PREFERRED_PROVIDER_java2-runtime = "${DEFAULTJRE}"
+PREFERRED_PROVIDER_openjdk-8-jre = "${DEFAULTJRE}"
+PREFERRED_PROVIDER_virtual/libg2d_mx6 = "imx-gpu-g2d"
+
+# openjdk on ubuntu1804 fails the version check
+EXTRA_OEMAKE_pn-openjdk-8-native += " DISABLE_HOTSPOT_OS_VERSION_CHECK=ok"
+EXTRA_OEMAKE_pn-openjdk-8 += " DISABLE_HOTSPOT_OS_VERSION_CHECK=ok"
+
+# Specify SGX GFX providers for Pepper
+# PREFERRED_PROVIDER_virtual/egl_pepper ?= "libgles-omap3"
+# PREFERRED_PROVIDER_virtual/libgles1_pepper ?= "libgles-omap3"
+# PREFERRED_PROVIDER_virtual/libgles2_pepper ?= "libgles-omap3"
+# PREFERRED_PROVIDER_virtual/mesa_pepper ?= "mesa-gl"
+
+# Specify SGX GFX providers for Overo
+# PREFERRED_PROVIDER_virtual/egl_overo ?= "libgles-omap3"
+# PREFERRED_PROVIDER_virtual/libgles1_overo ?= "libgles-omap3"
+# PREFERRED_PROVIDER_virtual/libgles2_overo ?= "libgles-omap3"
+#
+# PREFERRED_VERSION_libgles-omap3_overo = "5.01.01.02"
+# PREFERRED_VERSION_omap3-sgx-modules_overo = "5.01.01.02"
+
+# SGX for Overo requires Kernel v3.5.7
+# PREFERRED_PROVIDER_virtual/kernel = "linux-gumstix"
+# PREFERRED_VERSION_linux-gumstix = "3.5.7"
+
+# Use Gumstix source mirror as default premirror
+SOURCE_MIRROR_URL ?= "http://source-cache.gumstix.org/"
+INHERIT += "own-mirrors"
+#BB_GENERATE_MIRROR_TARBALLS = "1"
+
+#
+# Parallelism Options
+#
+# These two options control how much parallelism BitBake should use. The first 
+# option determines how many tasks bitbake should run in parallel:
+#
+BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+# 
+# The second option controls how many processes make should run in parallel when
+# running compile tasks:
+#
+PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+#
+# For a quad-core machine, BB_NUMBER_THREADS = "4", PARALLEL_MAKE = "-j 4" would
+# be appropriate for example.
+
+#
+# Machine Selection
+#
+# You need to select a specific machine to target the build with. There are a selection
+# of emulated machines available which can boot and run in the QEMU emulator:
+#
+#MACHINE ?= "qemuarm"
+#MACHINE ?= "qemumips"
+#MACHINE ?= "qemuppc"
+#MACHINE ?= "qemux86"
+#MACHINE ?= "qemux86-64"
+#
+# There are also the following hardware board target machines included for 
+# demonstration purposes:
+#
+#MACHINE ?= "atom-pc"
+#MACHINE ?= "beagleboard"
+#MACHINE ?= "mpc8315e-rdb"
+#MACHINE ?= "routerstationpro"
+#
+PREFERRED_PROVIDER_cryptodev-linux = "cryptodev-linux"
+# This sets the default machine to be overo if no other machine is selected:
+#
+COMPATIBLE_MACHINE_overo = "overo"
+MACHINE ?= "overo"
+#MACHINE ?= "pepper"
+#MACHINE ?= "duovero"
+#MACHINE ?= "poblano"
+#MACHINE ?= "raspberrypi"
+#MACHINE ?= "raspberrypi2"
+#MACHINE ?= "raspberrypi3"
+#MACHINE ?= "raspberrypi-cm"
+#MACHINE ?= "raspberrypi-cm3"
+#MACHINE ?= "dragonboard-410c"
+#MACHINE ?= "jetson-nano"
+#MACHINE ?= "jetson-tx2"
+#MACHINE ?= "verdin-imx8mm"
+
+# Get rid of the mesa packaging errors for rasberrypi and dragonbard devices
+INSANE_SKIP_mesa_rpi = "installed-vs-shipped"
+INSANE_SKIP_mesa_dragonboard-410c = "installed-vs-shipped"
+
+
+# Accept the Freescale EULA in order to compile image for machines
+ACCEPT_FSL_EULA_mx6 = "1"
+ACCEPT_FSL_EULA_mx7 = "1"
+ACCEPT_EULA_dragonboard-410c = "1"
+
+# Fix upstream machine conf for raspberry pi
+KERNEL_DEVICETREE_rpi = " \
+    bcm2708-rpi-zero-w.dtb \
+    bcm2708-rpi-b.dtb \
+    bcm2708-rpi-b-plus.dtb \
+    bcm2709-rpi-2-b.dtb \
+    bcm2710-rpi-3-b.dtb \
+    bcm2710-rpi-3-b-plus.dtb \
+    bcm2708-rpi-cm.dtb \
+    bcm2710-rpi-cm3.dtb \
+    \
+    overlays/hifiberry-amp.dtbo \
+    overlays/hifiberry-dac.dtbo \
+    overlays/hifiberry-dacplus.dtbo \
+    overlays/hifiberry-digi.dtbo \
+    overlays/i2c-rtc.dtbo \
+    overlays/iqaudio-dac.dtbo \
+    overlays/iqaudio-dacplus.dtbo \
+    overlays/pitft22.dtbo \
+    overlays/pitft28-resistive.dtbo \
+    overlays/pitft35-resistive.dtbo \
+    overlays/pps-gpio.dtbo \
+    overlays/rpi-ft5406.dtbo \
+    overlays/w1-gpio.dtbo \
+    overlays/w1-gpio-pullup.dtbo \
+    overlays/pi3-disable-bt.dtbo \
+    overlays/pi3-miniuart-bt.dtbo \
+    overlays/vc4-kms-v3d.dtbo \
+    "
+
+# Add dtoverlays for Gumstix wifi and sensor modules on raspberry pi machines
+KERNEL_DEVICETREE_append_rpi = "overlays/sdio-wlink8.dtbo overlays/i2c0-bcm2708.dtbo overlays/tlv320aic3x-simple.dtbo overlays/i2s-gpio28-31.dtbo "
+KERNEL_DEVICETREE_append_raspberrypi-cm3 = "overlays/ov5640-gumstix.dtbo "
+
+# Jetson Nano specific changes
+KERNEL_DEVICETREE_jetson-nano = "_ddot_/_ddot_/_ddot_/_ddot_/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dtb"
+
+# add pcie_aspm=off to disable messages when using Google Coral TPU
+KERNEL_ARGS_jetson-nano = "console=ttyS0,115200 console=tty0 fbcon=map:0 net.ifnames=0 pcie_aspm=off"
+
+PARTITION_LAYOUT_TEMPLATE_jetson-nano = "flash_l4t_t210_emmc_p3448.xml"
+SDCARD_LAYOUT_TEMPLATE_jetson-nano = "flash_l4t_t210_emmc_p3448.xml"
+TEGRAFLASH_SDCARD_SIZE_jetson-nano = "14G"
+EMMC_SIZE_jetson-nano = "14G"
+TEGRA_SPIFLASH_BOOT_jetson-nano = "0"
+
+#
+# Where to place downloads
+#
+# During a first build the system will download many different source code tarballs
+# from various upstream projects. This can take a while, particularly if your network
+# connection is slow. These are all stored in DL_DIR. When wiping and rebuilding you
+# can preserve this directory to speed up this part of subsequent builds. This directory
+# is safe to share between multiple builds on the same machine too.
+#
+# The default is a downloads directory under TOPDIR which is the build directory.
+#
+#DL_DIR ?= "${TOPDIR}/downloads"
+
+#
+# Where to place shared-state files
+#
+# BitBake has the capability to accelerate builds based on previously built output.
+# This is done using "shared state" files which can be thought of as cache objects
+# and this option determines where those files are placed.
+#
+# You can wipe out TMPDIR leaving this directory intact and the build would regenerate
+# from these files if no changes were made to the configuration. If changes were made
+# to the configuration, only shared state files where the state was still valid would
+# be used (done using checksums).
+#
+# The default is a sstate-cache directory under TOPDIR.
+#
+#SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+
+#
+# Where to place the build output
+#
+# This option specifies where the bulk of the building work should be done and
+# where BitBake should place its temporary files and output. Keep in mind that
+# this includes the extraction and compilation of many applications and the toolchain
+# which can use Gigabytes of hard disk space.
+#
+# The default is a tmp directory under TOPDIR.
+#
+#TMPDIR = "${TOPDIR}/tmp"
+
+#
+# Default policy config
+#
+# The distribution setting controls which policy settings are used as defaults.
+# The default value is fine for general Yocto project use, at least initially.
+# Ultimately when creating custom policy, people will likely end up subclassing 
+# these defaults.
+#
+
+DISTRO ?= "poky"
+# As an example of a subclass there is a "bleeding" edge policy configuration
+# where many versions are set to the absolute latest code from the upstream 
+# source control systems. This is just mentioned here as an example, its not
+# useful to most new users.
+# DISTRO ?= "poky-bleeding"
+
+#
+# Package Management configuration
+#
+# This variable lists which packaging formats to enable. Multiple package backends 
+# can be enabled at once and the first item listed in the variable will be used 
+# to generate the root filesystems.
+# Options are:
+#  - 'package_deb' for debian style deb files
+#  - 'package_ipk' for ipk files are used by opkg (a debian style embedded package manager)
+#  - 'package_rpm' for rpm style packages
+# E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
+# We default to rpm:
+PACKAGE_CLASSES ?= "package_rpm"
+PACKAGE_FEED_URIS = "https://packages.gumstix.com/warrior"
+PACKAGE_FEED_BASE_PATHS ?= "rpm"
+
+PACKAGE_FEED_ARCHS_overo = "noarch overo cortexa8hf_neon"
+PACKAGE_FEED_ARCHS_jetson-nano = "noarch jetson_nano armv8a_tegra210 aarch64"
+PACKAGE_FEED_ARCHS_jetson-tx2 = "noarch jetson_tx2 armv8a_tegra186 aarch64"
+PACKAGE_FEED_ARCHS_rpi = "noarch cortexa7hf_neon_vfpv4 cortexa7t2hf_neon_vfpv4 raspberrypi_cm3"
+
+PACKAGE_CLASSES_rpi = "package_rpm package_deb"
+PACKAGE_FEED_BASE_PATHS_rpi = "rpm deb"
+
+# Use local PR server by default
+PRSERV_HOST ?= "localhost:0"
+
+#
+# SDK/ADT target architecture
+#
+# This variable specified the architecture to build SDK/ADT items for and means
+# you can build the SDK packages for architectures other than the machine you are 
+# running the build on (i.e. building i686 packages on an x86_64 host._
+# Supported values are i686 and x86_64
+#SDKMACHINE ?= "i686"
+
+#
+# Extra image configuration defaults
+#
+# The EXTRA_IMAGE_FEATURES variable allows extra packages to be added to the generated 
+# images. Some of these options are added to certain image types automatically. The
+# variable can contain the following options:
+#  "dbg-pkgs"       - add -dbg packages for all installed packages
+#                     (adds symbol information for debugging/profiling)
+#  "dev-pkgs"       - add -dev packages for all installed packages
+#                     (useful if you want to develop against libs in the image)
+#  "tools-sdk"      - add development tools (gcc, make, pkgconfig etc.)
+#  "tools-debug"    - add debugging tools (gdb, strace)
+#  "tools-profile"  - add profiling tools (oprofile, exmap, lttng valgrind (x86 only))
+#  "tools-testapps" - add useful testing tools (ts_print, aplay, arecord etc.)
+#  "debug-tweaks"   - make an image suitable for development
+#                     e.g. ssh root access has a blank password
+# There are other application targets that can be used here too, see
+# meta/classes/image.bbclass and meta/classes/core-image.bbclass for more details.
+# We default to enabling the debugging tweaks.
+EXTRA_IMAGE_FEATURES = "debug-tweaks"
+
+#
+# Additional image features
+#
+# The following is a list of additional classes to use when building images which
+# enable extra features. Some available options which can be included in this variable 
+# are:
+#   - 'buildstats' collect build statistics
+#   - 'image-mklibs' to reduce shared library files size for an image
+#   - 'image-prelink' in order to prelink the filesystem image
+#   - 'image-swab' to perform host system intrusion detection
+# NOTE: if listing mklibs & prelink both, then make sure mklibs is before prelink
+# NOTE: mklibs also needs to be explicitly enabled for a given image, see local.conf.extended
+USER_CLASSES ?= "image-mklibs image-prelink"
+
+#
+# Runtime testing of images
+#
+# The build system can test booting virtual machine images under qemu (an emulator)
+# after any root filesystems are created and run tests against those images. To
+# enable this uncomment this line
+# IMAGETEST = "qemu"
+#
+# This variable controls which tests are run against virtual images if enabled
+# above. The following would enable bat, boot the test case under the sanity suite
+# and perform toolchain tests
+#TEST_SCEN = "sanity bat sanity:boot toolchain"
+#
+# Because of the QEMU booting slowness issue (see bug #646 and #618), the
+# autobuilder may suffer a timeout issue when running sanity tests. We introduce
+# the variable TEST_SERIALIZE here to reduce the time taken by the sanity tests.
+# It is set to 1 by default, which will boot the image and run cases in the same
+# image without rebooting or killing the machine instance. If it is set to 0, the
+# image will be copied and tested for each case, which will take longer but be
+# more precise.
+#TEST_SERIALIZE = "1"
+
+#
+# Interactive shell configuration
+#
+# Under certain circumstances the system may need input from you and to do this it 
+# can launch an interactive shell. It needs to do this since the build is 
+# multithreaded and needs to be able to handle the case where more than one parallel
+# process may require the user's attention. The default is iterate over the available
+# terminal types to find one that works.
+#
+# Examples of the occasions this may happen are when resolving patches which cannot
+# be applied, to use the devshell or the kernel menuconfig
+#
+# Supported values are auto, gnome, xfce, rxvt, screen, konsole (KDE 3.x only), none
+# Note: currently, Konsole support only works for KDE 3.x due to the way
+# newer Konsole versions behave
+#OE_TERMINAL = "auto"
+# By default disable interactive patch resolution (tasks will just fail instead):
+PATCHRESOLVE = "noop"
+
+#
+# Shared-state files from other locations
+#
+# As mentioned above, shared state files are prebuilt cache data objects which can 
+# used to accelerate build time. This variable can be used to configure the system
+# to search other mirror locations for these objects before it builds the data itself.
+#
+# This can be a filesystem directory, or a remote url such as http or ftp. These
+# would contain the sstate-cache results from previous builds (possibly from other 
+# machines). This variable works like fetcher MIRRORS/PREMIRRORS and points to the 
+# cache locations to check for the shared objects.
+#SSTATE_MIRRORS ?= "\
+#file://.* http://sstate-cache.gumstix.org/"
+
+# CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
+# track the version of this file when it was generated. This can safely be ignored if
+# this doesn't mean anything to you.
+CONF_VERSION = "1"
+
+# Use systemd as init manager
+DISTRO_FEATURES_append = " systemd"
+VIRTUAL-RUNTIME_init_manager = "systemd"
+DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+
+# Consider pam
+DISTRO_FEATURES_append = " pam"
+
+# Use lxdm as graphical greeter
+VIRTUAL-RUNTIME_graphical_init_manager = "lxdm"
+
+# Use bluez5 rather than bluez4
+DISTRO_FEATURES_append = " bluez5"
+
+# vc4graphics is required for rpi to build qtwayland
+# However vc4graphics will stop the HDMI from working on RPI CM and CM3
+DISTRO_FEATURES_remove_rpi = "wayland"
+
+# xfce requires polkit
+DISTRO_FEATURES_append = " polkit"
+
+# RPI configurations to enable i2c, spi, uart
+SERIAL_CONSOLES_rpi = "115200;ttyS0"
+ENABLE_UART_rpi = "1"
+ENABLE_I2C_rpi = "1"
+# if using Wifi on Raspberry Pi CM3
+#RPI_EXTRA_CONFIG = '\n# Raspberry Pi CM3 WLink8 Enable\ndtoverlay=sdio-wlink8\n'
+
+# if Wifi is not needed and you'd like to speed up boot time
+# remove the wpa_supplicant@wlan0 service
+#ROOTFS_CMD = "remove_wpa; "
+
+# meta-ros fails to build because of this package. Just skip it to get it building
+INSANE_SKIP_python-wstool = "installed-vs-shipped"
+
+# Use wic to generate 2G SD-card image for overo
+#IMAGE_FSTYPES_append_overo = " wic"
+#WKS_FILE_overo = "sdimage-gumstix.wks"
+#IMAGE_BOOT_FILES_overo ?= "MLO u-boot.img uImage"
+
+# extra image building variables for tegra builds 
+IMAGE_ROOTFS_SIZE_tegra = "16384"
+IMAGE_CLASSES_tegra += "image_types_tegra"
+IMAGE_FSTYPES_tegra = "tegraflash"
+# tegra-minimal-initramfs requires cpio.gz file type
+IMAGE_FSTYPES_append_pn-tegra-minimal-initramfs_tegra = " cpio.gz"
+IMAGE_FSTYPES_remove_pn-tegra-minimal-initramfs_tegra = "tegraflash"
+# cuda libraries, by default saved to the same directory as other downloads
+#NVIDIA_DEVNET_MIRROR = "${TOPDIR}/downloads"
+# by default use ubuntu1604 libraries
+CUDA_BINARIES_NATIVE = "cuda-binaries-ubuntu1604-native"
+# configure cuda capabilities
+PACKAGECONFIG_pn-tensorflow-cuda_jetson-nano = "33"
+PACKAGECONFIG_pn-tensorflow-cuda_jetson-tx2 = "24"
+# add additional cuda packages to cuda-tools-native in meta-tegra
+CUDA_PKGS_append_pn-cuda-tools-native = " cusolver cublas cufft curand cudart driver-dev"
+# CUDA requires GCC 7
+GCCVERSION_tegra = "7.%"
+# GCC 7 doesn't support fmacro-prefix-map, results in "error: cannot compute suffix of object files: cannot compile"
+DEBUG_PREFIX_MAP_remove_tegra = "-fmacro-prefix-map=${WORKDIR}=/usr/src/debug/${PN}/${EXTENDPE}${PV}-${PR}"
+
+# AutoBSP
+RPI_EXTRA_CONFIG += '\n#For Raspberry Pi Compute Module:\n#dtoverlay=devicetree-rpi_cm\n'
+RPI_EXTRA_CONFIG += '\n#For Pi HAT connector:\n#dtoverlay=devicetree-rpi_hat\n'
+
+# Raspberry Pi Userland, for Enable/Disable camera addon support
+# Feel free to comment it out, if you're not using cameras
+RPI_EXTRA_CONFIG += '\nstart_x=1'
+RPI_EXTRA_CONFIG += '\ngpu_mem=128\n'
+
+# Mask out extra layers when not building for certain devices
+A = " \
+    meta-tegra \
+    meta-tegra/contrib \
+    meta-gumstix/recipes-kernel/linux/linux-tegra_4.9.%.bbappend \
+    meta-gumstix/recipes-devtools/cuda \
+    meta-gumstix/recipes-devtools/cudnn \
+    meta-gumstix/recipes-devtools/gcc \
+    meta-tensorflow/recipes-devtools/openjdk/openjdk-8-native_212b04.bb \
+    meta-python2 \
+    meta-toradex-bsp-common/recipes-core/systemd/systemd_%.bbappend \
+    meta/recipes-connectivity/nfs-utils/nfs-utils_2.3.3.bb \
+    meta-gumstix/recipes-core/packagegroups/packagegroup-cli-tools.bb \
+"
+A_tegra = " \
+    meta-java/recipes-core/openjdk/openjdk-7_99b00-2.6.5.bb \
+    meta-tensorflow/recipes-devtools/openjdk/openjdk-8-native_212b04.bb \
+    meta-python2/recipes-core/images \
+"
+
+BBMASK .= "${A}"
+
+# Uncomment to accept EULA for FMRIB Software Library
+# Needed to compile Verdin images
+#ACCEPT_FSL_EULA = "1"
+
+TDX_MATRIX_BUILD_TIME ?= "${DATE}${TIME}"
+TDX_MATRIX_BUILD_TIME[vardepsexclude] += "DATE TIME"

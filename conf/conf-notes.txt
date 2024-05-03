@@ -1,0 +1,2 @@
+Common targets are:
+    gumstix-console-firechip-image

@@ -19,5 +19,5 @@ BBLAYERS ?= " \
   ##COREBASE##/meta-qt5 \
   ##COREBASE##/meta-java \
   ##COREBASE##/meta-clang \
-  ##COREBASE##/meta-firechip \
+  ##COREBASE##/meta-gumstix-firechip \
   "

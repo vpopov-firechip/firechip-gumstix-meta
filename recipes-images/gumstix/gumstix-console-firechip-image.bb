@@ -98,38 +98,6 @@ IMAGE_INSTALL_append_rpi += " \
     python3-rpi-ws281x \
 "
 
-IMAGE_INSTALL_append_tegra += " \
-    kernel-modules \
-    tegra-tools \
-    nvgstcapture \
-    cuda-toolkit \
-    cudnn \
-    tensorrt \
-    protobuf \
-    hdf5 \
-    python3 \
-    python3-numpy \
-    python3-keras-applications \
-    python3-keras-preprocessing \
-    python3-pip \
-    python3-wheel \
-    python3-protobuf \
-    python3-grpcio \
-    python3-absl \
-    python3-astor \
-    python3-gast \
-    python3-termcolor \
-    python3-h5py \
-    python3-pyparsing \
-    python3-matplotlib \
-    python3-kiwisolver \
-    python3-pillow \
-    opencv \
-    tensorflow-cuda \
-    tensorflow-benchmark \
-    tensorflow-tf-trt-models \
-"
-
 ROOTFS_CMD ?= ""
 ROOTFS_POSTPROCESS_COMMAND += "${ROOTFS_CMD}"
 

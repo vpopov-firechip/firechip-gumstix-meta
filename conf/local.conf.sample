@@ -428,16 +428,15 @@ A = " \
     meta-gumstix/recipes-devtools/cuda \
     meta-gumstix/recipes-devtools/cudnn \
     meta-gumstix/recipes-devtools/gcc \
+    meta-gumstix/recipes-framework/tensorflow/ \
+    meta-gumstix/recipes-gnome/gnome-bluetooth/ \
+    meta-gumstix/recipes-multimedia/alsa/ \
+    meta-gumstix-extras/recipes-qt5/ \
     meta-tensorflow/recipes-devtools/openjdk/openjdk-8-native_212b04.bb \
     meta-python2 \
     meta-toradex-bsp-common/recipes-core/systemd/systemd_%.bbappend \
     meta/recipes-connectivity/nfs-utils/nfs-utils_2.3.3.bb \
     meta-gumstix/recipes-core/packagegroups/packagegroup-cli-tools.bb \
-"
-A_tegra = " \
-    meta-java/recipes-core/openjdk/openjdk-7_99b00-2.6.5.bb \
-    meta-tensorflow/recipes-devtools/openjdk/openjdk-8-native_212b04.bb \
-    meta-python2/recipes-core/images \
 "
 
 BBMASK .= "${A}"
